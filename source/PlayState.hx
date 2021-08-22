@@ -2850,7 +2850,7 @@ class PlayState extends MusicBeatState
 								score = -300;
 								combo = 0;
 								misses++;
-								health -= 0.9;
+								health -= 0.1;
 								ss = false;
 								shits++;
 								if (FlxG.save.data.accuracyMod == 0)
@@ -2868,7 +2868,7 @@ class PlayState extends MusicBeatState
 							{
 								daRating = 'bad';
 								score = 0;
-								health -= 0.08;
+								health -= 0.06;
 								ss = false;
 								bads++;
 								if (FlxG.save.data.accuracyMod == 0)
@@ -2902,7 +2902,7 @@ class PlayState extends MusicBeatState
 						if (daNote.noteType == 1 || daNote.noteType == 0)
 							{
 								if (health < 2)
-									health += 0.05;
+									health += 0.06;
 								if (FlxG.save.data.accuracyMod == 0)
 									totalNotesHit += 1;
 								sicks++;	
