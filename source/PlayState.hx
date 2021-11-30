@@ -2372,7 +2372,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			trace("Its getting toasty if my code works you should be dead");
+			trace("Toasted");
 		}
 
 
@@ -2390,6 +2390,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			trace("dead")
 
 			#if windows
 			// Game Over doesn't get his own variable because it's only used here
@@ -2412,6 +2413,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.music.stop();
 		
 					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+					trace("reset")
 		
 					#if windows
 					// Game Over doesn't get his own variable because it's only used here
@@ -2431,6 +2433,7 @@ class PlayState extends MusicBeatState
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
+				trace("Note missed");
 			}
 		}
 
