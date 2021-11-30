@@ -90,7 +90,8 @@ class PlayState extends MusicBeatState
 	public static var bads:Int = 0;
 	public static var goods:Int = 0;
 	public static var sicks:Int = 0;
-	public static var heat:Int = 0;
+	public var heat:Int = 0;
+	public var deadboy:Bool = false;
 
 	public static var songPosBG:FlxSprite;
 	public static var songPosBar:FlxBar;
@@ -1015,12 +1016,13 @@ class PlayState extends MusicBeatState
 
 		originalX = scoreTxt.x;
 
-
+        
 		scoreTxt.scrollFactor.set();
 		
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
 
 		add(scoreTxt);
+
 
 		replayTxt = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 75, healthBarBG.y + (PlayStateChangeables.useDownscroll ? 100 : -100), 0, "REPLAY", 20);
 		replayTxt.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
@@ -1998,7 +2000,7 @@ class PlayState extends MusicBeatState
 				}
 				// phillyCityLights.members[curLight].alpha -= (Conductor.crochet / 1000) * FlxG.elapsed;
 		}
-
+ 
 		super.update(elapsed);
 
 		scoreTxt.text = Ratings.CalculateRanking(songScore,songScoreDef,nps,maxNPS,accuracy);
@@ -2361,7 +2363,7 @@ class PlayState extends MusicBeatState
 					// FlxG.switchState(new PlayState());
 			}
 		}
-        if (heat <= 100){
+		if (deadboy = true){
 			boyfriend.stunned = true;
 
 			persistentUpdate = false;
@@ -2372,53 +2374,46 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			trace("Toasted");
-		}
-
-
-		
-
-		if (health <= 0)
-		{
-			boyfriend.stunned = true;
-
-			persistentUpdate = false;
-			persistentDraw = false;
-			paused = true;
-
-			vocals.stop();
-			FlxG.sound.music.stop();
-
-			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			trace("dead")
+			trace("dead");
 
 			#if windows
 			// Game Over doesn't get his own variable because it's only used here
+			// The statement above is false but im lazy
 			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + ") " + Ratings.GenerateLetterRank(accuracy),"\nAcc: " + HelperFunctions.truncateFloat(accuracy, 2) + "% | Score: " + songScore + " | Misses: " + misses  , iconRPC);
 			#end
+			trace("Player died");
+		}
+        if (heat >= 100){
+			deadboy = true;
+			trace("toasted");
+		}
 
-			// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		#if debug
+		if(FlxG.keys.justPressed.T){
+			health += 100;
+			trace("birb mode");
+		}
+		#end
+
+		#if debug
+		if(FlxG.keys.justPressed.I){
+			health += 100;
+			heat += 90;
+			trace("Im a toaster");
+		}
+		#end
+
+		if (health <= 0)
+		{
+			deadboy = true;
+			trace("No health");
 		}
  		if (FlxG.save.data.resetButton)
 		{
 			if(FlxG.keys.justPressed.R)
 				{
-					boyfriend.stunned = true;
-
-					persistentUpdate = false;
-					persistentDraw = false;
-					paused = true;
-		
-					vocals.stop();
-					FlxG.sound.music.stop();
-		
-					openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-					trace("reset")
-		
-					#if windows
-					// Game Over doesn't get his own variable because it's only used here
-					DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + ") " + Ratings.GenerateLetterRank(accuracy),"\nAcc: " + HelperFunctions.truncateFloat(accuracy, 2) + "% | Score: " + songScore + " | Misses: " + misses  , iconRPC);
-					#end
+					deadboy = true;
+					trace("Reset");
 		
 					// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 				}
@@ -2433,7 +2428,7 @@ class PlayState extends MusicBeatState
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
-				trace("Note missed");
+				trace("Npc note press");
 			}
 		}
 
@@ -2626,7 +2621,7 @@ class PlayState extends MusicBeatState
 									{
 										health -= 0.075;
 										vocals.volume = 0;
-										heat += 1;
+										heat += 10;
 										if (theFunne)
 											noteMiss(daNote.noteData, daNote);
 									}
@@ -2863,7 +2858,7 @@ class PlayState extends MusicBeatState
 						if (daNote.noteType == 2)
 							{
 								
-								heat += 100;
+								heat -= 10;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
@@ -2882,7 +2877,7 @@ class PlayState extends MusicBeatState
 							{
 								
 								
-								heat += 100;
+								heat -= 10;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
@@ -2901,7 +2896,7 @@ class PlayState extends MusicBeatState
 								
 								
 								
-								heat += 100;
+								heat -= 10;
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
 							{
@@ -2919,7 +2914,7 @@ class PlayState extends MusicBeatState
 							{
 								
 								
-								heat += 100;
+								heat -= 10;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
