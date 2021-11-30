@@ -90,6 +90,7 @@ class PlayState extends MusicBeatState
 	public static var bads:Int = 0;
 	public static var goods:Int = 0;
 	public static var sicks:Int = 0;
+	public static var heat:Int = 0;
 
 	public static var songPosBG:FlxSprite;
 	public static var songPosBar:FlxBar;
@@ -256,7 +257,7 @@ class PlayState extends MusicBeatState
 
 		repPresses = 0;
 		repReleases = 0;
-
+    
 
 		PlayStateChangeables.useDownscroll = FlxG.save.data.downscroll;
 		PlayStateChangeables.safeFrames = FlxG.save.data.frames;
@@ -2360,6 +2361,22 @@ class PlayState extends MusicBeatState
 					// FlxG.switchState(new PlayState());
 			}
 		}
+        if (heat <= 100){
+			boyfriend.stunned = true;
+
+			persistentUpdate = false;
+			persistentDraw = false;
+			paused = true;
+
+			vocals.stop();
+			FlxG.sound.music.stop();
+
+			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			trace("Its getting toasty if my code works you should be dead");
+		}
+
+
+		
 
 		if (health <= 0)
 		{
@@ -2606,6 +2623,7 @@ class PlayState extends MusicBeatState
 									{
 										health -= 0.075;
 										vocals.volume = 0;
+										heat += 1;
 										if (theFunne)
 											noteMiss(daNote.noteData, daNote);
 									}
@@ -2842,7 +2860,7 @@ class PlayState extends MusicBeatState
 						if (daNote.noteType == 2)
 							{
 								
-								health = -10;
+								heat += 100;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
@@ -2860,8 +2878,8 @@ class PlayState extends MusicBeatState
 						if (daNote.noteType == 2)
 							{
 								
-								health = -10;
 								
+								heat += 100;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
@@ -2879,7 +2897,8 @@ class PlayState extends MusicBeatState
 							{
 								
 								
-								health = -10;
+								
+								heat += 100;
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
 							{
@@ -2896,7 +2915,8 @@ class PlayState extends MusicBeatState
 						if (daNote.noteType == 2)
 							{
 								
-								health = -10;
+								
+								heat += 100;
 								
 							}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
