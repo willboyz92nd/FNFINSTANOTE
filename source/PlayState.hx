@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxAxes;
 import openfl.ui.KeyLocation;
 import openfl.events.Event;
 import haxe.EnumTools;
@@ -91,7 +92,8 @@ class PlayState extends MusicBeatState
 	public static var goods:Int = 0;
 	public static var sicks:Int = 0;
 	public var heat:Int = 0;
-	public var deadboy:Bool = false;
+	var isShitReal:Bool = false;
+
 
 	public static var songPosBG:FlxSprite;
 	public static var songPosBar:FlxBar;
@@ -2118,12 +2120,14 @@ class PlayState extends MusicBeatState
 		#end
 
 		if (startingSong)
-		{
+		{     
 			if (startedCountdown)
 			{
 				Conductor.songPosition += FlxG.elapsed * 1000;
 				if (Conductor.songPosition >= 0)
 					startSong();
+				
+				
 			}
 		}
 		else
@@ -2363,7 +2367,8 @@ class PlayState extends MusicBeatState
 					// FlxG.switchState(new PlayState());
 			}
 		}
-		if (deadboy = true){
+		
+        if (heat >= 100){
 			boyfriend.stunned = true;
 
 			persistentUpdate = false;
@@ -2374,7 +2379,7 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-			trace("dead");
+			
 
 			#if windows
 			// Game Over doesn't get his own variable because it's only used here
@@ -2382,10 +2387,6 @@ class PlayState extends MusicBeatState
 			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + ") " + Ratings.GenerateLetterRank(accuracy),"\nAcc: " + HelperFunctions.truncateFloat(accuracy, 2) + "% | Score: " + songScore + " | Misses: " + misses  , iconRPC);
 			#end
 			trace("Player died");
-		}
-        if (heat >= 100){
-			deadboy = true;
-			trace("toasted");
 		}
 
 		#if debug
@@ -2403,17 +2404,61 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
+		#if windows
+		if (PlayStateChangeables.botPlay){
+			trace("useless trace")
+			PlayStateChangeables.botPlay = false;
+		}
+		#end
+
+		// just for debuging
+		if (isShitReal = true){
+			trace("Shit just got real");
+		}
+
 		if (health <= 0)
 		{
-			deadboy = true;
-			trace("No health");
+			boyfriend.stunned = true;
+
+			persistentUpdate = false;
+			persistentDraw = false;
+			paused = true;
+
+			vocals.stop();
+			FlxG.sound.music.stop();
+
+			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			
+
+			#if windows
+			// Game Over doesn't get his own variable because it's only used here
+			// The statement above is false but im lazy
+			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + ") " + Ratings.GenerateLetterRank(accuracy),"\nAcc: " + HelperFunctions.truncateFloat(accuracy, 2) + "% | Score: " + songScore + " | Misses: " + misses  , iconRPC);
+			#end
+			trace("Player died");
 		}
  		if (FlxG.save.data.resetButton)
 		{
 			if(FlxG.keys.justPressed.R)
 				{
-					deadboy = true;
-					trace("Reset");
+					boyfriend.stunned = true;
+
+			persistentUpdate = false;
+			persistentDraw = false;
+			paused = true;
+
+			vocals.stop();
+			FlxG.sound.music.stop();
+
+			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			
+
+			#if windows
+			// Game Over doesn't get his own variable because it's only used here
+			// The statement above is false but im lazy
+			DiscordClient.changePresence("GAME OVER -- " + SONG.song + " (" + storyDifficultyText + ") " + Ratings.GenerateLetterRank(accuracy),"\nAcc: " + HelperFunctions.truncateFloat(accuracy, 2) + "% | Score: " + songScore + " | Misses: " + misses  , iconRPC);
+			#end
+			trace("Player died");  
 		
 					// FlxG.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 				}
@@ -2428,7 +2473,7 @@ class PlayState extends MusicBeatState
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
-				trace("Npc note press");
+				
 			}
 		}
 
@@ -2543,6 +2588,16 @@ class PlayState extends MusicBeatState
 							case 0:
 								dad.playAnim('singLEFT' + altAnim, true);
 						}
+						
+                         if (isShitReal){
+                          if (health > 0.15) health -= 0.05;
+						 FlxG.camera.shake(0.02, 0.05, null, true, FlxAxes.XY);
+						 }
+                        else{
+                         if (health > 0.15) health -= 0.02;
+						}
+
+                            
 						
 						if (FlxG.save.data.cpuStrums)
 						{
@@ -3820,6 +3875,15 @@ class PlayState extends MusicBeatState
 		{
 			resyncVocals();
 		}
+
+		if (curSong == 'blammed') 
+			{
+				switch (curBeat)
+				{
+					case 512: 
+					  isShitReal = true;
+				 }
+			}
 
 		#if windows
 		if (executeModchart && luaModchart != null)
